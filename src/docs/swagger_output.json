@@ -28,27 +28,16 @@
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "fullName": {
-                    "example": "any"
-                  },
-                  "userName": {
-                    "example": "any"
-                  },
-                  "email": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  },
-                  "confirmPassword": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
               }
             }
           }
@@ -115,6 +104,34 @@
       }
     },
     "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "tes 123"
+          },
+          "userName": {
+            "type": "string",
+            "example": "tes-123"
+          },
+          "email": {
+            "type": "string",
+            "example": "tes123@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "12345678"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "example": "12345678"
+          }
+        },
+        "xml": {
+          "name": "RegisterRequest"
+        }
+      },
       "LoginRequest": {
         "type": "object",
         "properties": {
