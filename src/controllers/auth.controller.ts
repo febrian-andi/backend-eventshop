@@ -79,22 +79,26 @@ export default {
   },
 
   async login(req: Request, res: Response) {
+    /**
+     #swagger.requestBody = {
+       required: true,
+       schema: {$ref: "#/components/schemas/LoginRequest"}
+     }
+    */
     const { identifier, password } = req.body as unknown as TLogin;
 
     try {
       const userByIdentifier = await UserModel.findOne({
-        $or: [
-          { email: identifier },
-          { userName: identifier },
-        ],
+        $or: [{ email: identifier }, { userName: identifier }],
       });
 
       if (!userByIdentifier) {
         throw new Error("User not found");
       }
 
-      const validatePassword: boolean = encrypt(password) === userByIdentifier.password;
-      
+      const validatePassword: boolean =
+        encrypt(password) === userByIdentifier.password;
+
       if (!validatePassword) {
         throw new Error("User not found");
       }
@@ -102,7 +106,7 @@ export default {
       const token = generateToken({
         id: userByIdentifier._id,
         role: userByIdentifier.role,
-      })
+      });
 
       res.status(200).json({
         message: "Login successful",
@@ -118,10 +122,15 @@ export default {
   },
 
   async me(req: IReqUser, res: Response) {
+    /**
+     #swagger.security = [{
+        "bearerAuth": []
+     }]
+    */
     try {
       const user = req.user;
 
-      const result = await UserModel.findById(user?.id,);
+      const result = await UserModel.findById(user?.id);
 
       if (!result) {
         throw new Error("User not found");

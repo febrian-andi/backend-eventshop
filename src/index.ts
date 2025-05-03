@@ -3,6 +3,8 @@ import bodyParser from "body-parser";
 import router from "./routes/api";
 import dotenv from "dotenv";
 import db from "./utils/database";
+import docs from "./docs/route";
+import cors from "cors";
 
 dotenv.config();
 
@@ -14,7 +16,11 @@ async function init() {
     const PORT = process.env.PORT || 3000;
     const app = express();
 
+    app.use(cors());
+
     app.use(bodyParser.json());
+
+    docs(app);
 
     app.get("/", (req, res) => {
       res.status(200).json({
@@ -22,6 +28,7 @@ async function init() {
         data: null,
       });
     });
+
 
     app.use("/api", router);
 
