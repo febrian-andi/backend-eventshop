@@ -6,7 +6,7 @@ import path from "path";
 
 export default function docs(app: Express) {
   const css = fs.readFileSync(
-    path.resolve(__dirname, "../../node_modules/swagger-ui-dist/swagger-ui.css"),
+    path.resolve(__dirname, "./swagger-ui.css"),
     "utf8"
   );
   
