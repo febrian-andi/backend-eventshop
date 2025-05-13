@@ -37,8 +37,11 @@ const doc = {
         confirmPassword: "12345678",
       },
       LoginRequest: {
-        identifier: "febrianandi",
+        identifier: "tes-123",
         password: "12345678",
+      },
+      ActivationRequest: {
+        code: "1234567890abcdef",
       },
     },
   },

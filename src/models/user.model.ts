@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { encrypt } from "../utils/encryption";
+import { sendMail, renderMailHtml } from '../utils/mail/mail';
+import { CLIENT_HOST, EMAIL_BREVO } from "../utils/env";
 
 export interface User {
     fullName: string;
@@ -10,6 +12,7 @@ export interface User {
     profilePicture: string;
     isActive: boolean;
     activationCode: string;
+    createdAt?: String;
 };
 
 const Schema = mongoose.Schema;
@@ -54,7 +57,31 @@ const UserSchema = new Schema<User>({
 UserSchema.pre("save", function (next) {
     const user = this;
     user.password = encrypt(user.password);
+    user.activationCode = encrypt(user.id);
     next();
+});
+
+UserSchema.post("save", async function (doc, next) {
+  try {
+    const user = doc;
+    const contentMail = await renderMailHtml("registration-success.ejs", {
+      userName: user.userName,
+      fullName: user.fullName,
+      email: user.email,
+      createdAt: user.createdAt,
+      activationLink: `${CLIENT_HOST}/auth/activation?code=${user.activationCode}`,
+    });
+    await sendMail({
+      from: `"FAN - Event Shop" <${EMAIL_BREVO}>`,
+      to: user.email,
+      subject: "Aktivasi Akun Anda",
+      html: contentMail as string,
+    });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    next();
+  }
 });
 
 UserSchema.methods.toJSON = function () {
