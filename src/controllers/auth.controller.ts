@@ -182,18 +182,19 @@ export default {
     */
     try {
       const { code } = req.body as unknown as { code: string };
+      const user = await UserModel.findOne({ activationCode: code });
+      
+      if (!user) {
+        throw new Error("invalid activation code");
+      }        
+      
+      if (user?.isActive) {
+        throw new Error("User already activated");
+      }
 
-      const user = await UserModel.findOneAndUpdate(
-        {
-          activationCode: code,
-        },
-        {
-          isActive: true,
-        },
-        {
-          new: true,
-        }
-      );
+      user.isActive = true;
+      await user.save();
+
       res.status(200).json({
         message: "User activated successfully",
         data: user,
