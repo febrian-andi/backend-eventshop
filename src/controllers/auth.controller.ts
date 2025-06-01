@@ -115,14 +115,18 @@ export default {
       });
 
       if (!userByIdentifier) {
-        throw new Error("User not found");
+        throw new Error("username, email or password is incorrect");
       }
 
       const validatePassword: boolean =
         encrypt(password) === userByIdentifier.password;
 
       if (!validatePassword) {
-        throw new Error("User not found");
+        throw new Error("username, email or password is incorrect");
+      }
+
+      if (!userByIdentifier.isActive) {
+        throw new Error("User is not activated");
       }
 
       const token = generateToken({
@@ -188,16 +192,19 @@ export default {
         throw new Error("invalid activation code");
       }        
       
-      if (user?.isActive) {
+      if (user.isActive) {
         throw new Error("User already activated");
       }
 
-      user.isActive = true;
-      await user.save();
+      const updatedUser = await UserModel.findOneAndUpdate(
+        { _id: user._id },
+        { isActive: true },
+        { new: true }
+      );
 
       res.status(200).json({
         message: "User activated successfully",
-        data: user,
+        data: updatedUser,
       });
     } catch (error) {
       const err = error as unknown as Error;
