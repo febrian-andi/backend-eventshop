@@ -24,12 +24,10 @@ async function init() {
 
     app.get("/", (req, res) => {
       res.status(200).json({
-        message: "Server is running",
-        data: null,
+        message: "Server is running.",
       });
     });
-
-
+    
     app.use("/api", router);
 
     app.listen(PORT, () => {
