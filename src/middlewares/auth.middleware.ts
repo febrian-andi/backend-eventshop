@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { getUserData } from "../utils/jwt";
-import { IReqUser } from '../utils/interfaces';
+import { IReqUser } from "../utils/interfaces";
+import response from "../utils/response";
 
 export const authMiddleware = (
   req: Request,
@@ -10,34 +11,25 @@ export const authMiddleware = (
   const authorization = req.headers?.authorization;
 
   if (!authorization) {
-    res.status(403).json({
-      message: "Unauthorized",
-      data: null,
-    });
+    response.unauthorized(res, "Unauthorized");
     return;
   }
 
   const [prefix, accessToken] = authorization.split(" ");
 
   if (!(prefix === "Bearer" && accessToken)) {
-    res.status(403).json({
-      message: "Unauthorized",
-      data: null,
-    });
+    response.unauthorized(res, "Unauthorized");
+
     return;
   }
 
   const user = getUserData(accessToken);
 
   if (!user) {
-    res.status(403).json({
-      message: "Unauthorized",
-      data: null,
-    });
+    response.unauthorized(res, "Unauthorized");
     return;
   }
 
   (req as IReqUser).user = user;
   next();
-  
 };
