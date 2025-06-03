@@ -30,18 +30,40 @@ const doc = {
     },
     schemas: {
       RegisterRequest: {
-        fullName: "tes 123",
-        userName: "tes-123",
+        fullName: "",
+        userName: "",
         email: "tes123@example.com",
-        password: "1234ABCD",
-        confirmPassword: "1234ABCD",
+        password: "",
+        confirmPassword: "",
       },
       LoginRequest: {
-        identifier: "tes-123",
-        password: "12345678",
+        identifier: "",
+        password: "",
       },
       ActivationRequest: {
-        code: "1234567890abcdef",
+        code: "",
+      },
+      CreateOrUpdateCategoryRequest: {
+        name: "",
+        description: "",
+        icon: "",
+      },
+      CreateOrUpdateEventRequest: {
+        name: "",
+        banner:"",
+        category: "category ObjectID",
+        description: "",
+        startDate: "yyy-mm-dd hh:mm:ss",
+        endDate: "yyy-mm-dd hh:mm:ss",
+        location: {
+          region: "region id",
+          coordinates: [0, 0],
+        },
+        isOnline: false,
+        isFeatured: false,
+      },
+      RemoveMediaRequest: {
+        fileUrl: "fileUrl"
       },
     },
   },

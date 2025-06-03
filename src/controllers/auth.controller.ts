@@ -31,19 +31,23 @@ const registerValidationSchema = Yup.object({
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long")
     .test(
-      "uppercase",
-      "Password must contain at least one uppercase letter",
+      "has-letter",
+      "Password must contain at least one letter",
       (value) => {
         if (!value) return false;
-        const regex = /^(?=.*[A-Z])/;
+        const regex = /[a-zA-Z]/;
         return regex.test(value);
       }
     )
-    .test("number", "Password must contain at least one number", (value) => {
-      if (!value) return false;
-      const regex = /^(?=.*\d)/;
-      return regex.test(value);
-    }),
+    .test(
+      "has-number",
+      "Password must contain at least one number",
+      (value) => {
+        if (!value) return false;
+        const regex = /^(?=.*\d)/;
+        return regex.test(value);
+      }
+    ),
   confirmPassword: Yup.string()
     .required("Confirm password is required")
     .oneOf([Yup.ref("password"), ""], "Password not match"),
@@ -51,13 +55,6 @@ const registerValidationSchema = Yup.object({
 
 export default {
   async register(req: Request, res: Response) {
-    /**
-     #swagger.tags = ["Auth"]
-     #swagger.requestBody = {
-       required: true,
-       schema: {$ref: "#/components/schemas/RegisterRequest"}
-     }
-    */
     try {
       const { fullName, userName, email, password, confirmPassword } =
         req.body as unknown as TRegister;
@@ -95,13 +92,6 @@ export default {
   },
 
   async login(req: Request, res: Response) {
-    /**
-     #swagger.tags = ["Auth"]
-     #swagger.requestBody = {
-       required: true,
-       schema: {$ref: "#/components/schemas/LoginRequest"}
-     }
-    */
     try {
       const { identifier, password } = req.body as unknown as TLogin;
 
@@ -137,12 +127,6 @@ export default {
   },
 
   async me(req: IReqUser, res: Response) {
-    /**
-     #swagger.tags = ["Auth"]
-     #swagger.security = [{
-        "bearerAuth": []
-     }]
-    */
     try {
       const user = req.user;
 
@@ -160,21 +144,14 @@ export default {
   },
 
   async activation(req: Request, res: Response) {
-    /**
-     #swagger.tags = ["Auth"]
-     #swagger.requestBody = {
-       required: true,
-       schema: {$ref: "#/components/schemas/ActivationRequest"}
-     }
-    */
     try {
       const { code } = req.body as unknown as { code: string };
       const user = await UserModel.findOne({ activationCode: code });
-      
+
       if (!user) {
         throw new Error("invalid activation code");
-      }        
-      
+      }
+
       if (user.isActive) {
         throw new Error("User already activated");
       }
